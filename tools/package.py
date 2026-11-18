@@ -32,6 +32,8 @@ def main():
         'environment': {
             'PORT': '8799', 'DATA_DIR': '/data', 'PYTHONDONTWRITEBYTECODE': '1', 'PYTHONUNBUFFERED': '1',
             'WIZARD_TRUSTED_HOSTS': '${WIZARD_TRUSTED_HOSTS:-}', 'WIZARD_TRUSTED_ORIGINS': '${WIZARD_TRUSTED_ORIGINS:-}',
+            # The App Manager may publish on another host port than 8799: the agent gateway calls that loopback port.
+            'WIZARD_APP_HOSTS': '127.0.0.1:${APP_PORT},localhost:${APP_PORT}',
         },
         'volumes': ['${APP_SOURCE_DIR}:/app:ro', '${APP_DATA_DIR}/data:/data'],
         'healthcheck': {'test': ['CMD', 'python', '-c', "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8799/healthz',timeout=3)"],
