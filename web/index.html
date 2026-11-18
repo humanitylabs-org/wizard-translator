@@ -12,11 +12,12 @@
   <link rel="stylesheet" href="styles.css">
   <script defer src="/wizard-os-home/core/app-client.js"></script>
   <script defer src="wizard-sheet.js"></script>
+  <script defer src="device.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
   <div class="wz-app">
-    <header class="wz-head"><h1>Translator</h1><p><span id="engine" class="wz-pill off">Private</span></p></header>
+    <header class="wz-head"><h1>Translator</h1><p><span id="engine" class="wz-pill off">Starting</span></p></header>
     <main class="wz-scroll">
       <div class="tr-langs" role="group" aria-label="Languages">
         <button id="source" class="wz-button secondary tr-lang" type="button" aria-haspopup="dialog">Detect language</button>
@@ -50,14 +51,50 @@
         </div>
       </section>
 
+      <ul class="wz-list tr-engine-row">
+        <li><button id="engines" class="wz-row" type="button" aria-haspopup="dialog">
+          <span class="wz-main"><b>Engines</b><small id="engines-sub">Checking…</small></span>
+        </button></li>
+      </ul>
+
       <section class="wz-sec" aria-labelledby="recent-h" id="recent-sec" hidden>
         <h2 class="wz-sec-h" id="recent-h">Recent</h2>
         <ul id="recent" class="wz-list" aria-label="Recent translations"></ul>
       </section>
       <p id="status" class="wz-status wz-sr" role="status" aria-live="polite"></p>
-      <p class="tr-credit">Private translation by <a href="https://github.com/LibreTranslate/LibreTranslate" target="_blank" rel="noopener">LibreTranslate</a> on this box.</p>
+      <p class="tr-credit">Best quality: a private model in a <a href="https://tinfoil.sh" target="_blank" rel="noopener">Tinfoil</a> secure enclave. Offline: <a href="https://github.com/mozilla/translations" target="_blank" rel="noopener">Firefox Translations</a> on this device.</p>
     </main>
   </div>
+
+  <dialog id="settings" class="wz-sheet" aria-labelledby="settings-h">
+    <h2 id="settings-h">Engines</h2>
+    <section class="wz-sec">
+      <h3 class="wz-sec-h">Best quality</h3>
+      <ul class="wz-list">
+        <li><div class="wz-row"><span class="wz-main"><b>Private AI (Tinfoil)</b><small id="tinfoil-sub">Checking…</small></span>
+          <button id="tinfoil-act" class="wz-button secondary" type="button" hidden>Link</button></div></li>
+      </ul>
+    </section>
+    <section class="wz-sec">
+      <h3 class="wz-sec-h">On this device</h3>
+      <p class="tr-note tr-pad">Instant drafts while you type, and translation without internet. Nothing leaves the device.</p>
+      <ul id="offline-list" class="wz-list"></ul>
+    </section>
+    <section class="wz-sec">
+      <h3 class="wz-sec-h">Use</h3>
+      <ul class="wz-list">
+        <li><button id="mode-auto" class="wz-row" type="button" role="menuitemradio" aria-checked="true"><span class="wz-main"><b>Best available</b><small>This device first for speed, then private AI for quality</small></span></button></li>
+        <li><button id="mode-device" class="wz-row" type="button" role="menuitemradio" aria-checked="false"><span class="wz-main"><b>Only this device</b><small>Never sends text anywhere; lower quality</small></span></button></li>
+      </ul>
+    </section>
+    <section class="wz-sec">
+      <h3 class="wz-sec-h">Thai politeness</h3>
+      <ul class="wz-list">
+        <li><button id="speaker-male" class="wz-row" type="button" role="menuitemradio" aria-checked="true"><span class="wz-main"><b>ครับ</b><small>I speak as a man</small></span></button></li>
+        <li><button id="speaker-female" class="wz-row" type="button" role="menuitemradio" aria-checked="false"><span class="wz-main"><b>ค่ะ</b><small>I speak as a woman</small></span></button></li>
+      </ul>
+    </section>
+  </dialog>
 
   <dialog id="picker" class="wz-sheet" aria-labelledby="picker-h">
     <h2 id="picker-h">Translate from</h2>

@@ -17,3 +17,8 @@
 .wz-sheet .wz-row[aria-checked="true"] .wz-main b { color: var(--accent); }
 .tr-langs svg, .tr-box svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 #swap { color: var(--ink-2); }
+.tr-engine-row { margin: var(--wz-space-2) var(--wz-space-3) 0; }
+.tr-pad { padding: 0 var(--wz-space-3) var(--wz-space-2); }
+.wz-sheet .wz-row[aria-checked="true"] .wz-main b { color: var(--accent); }
+.tr-offline .wz-meter { margin-top: 4px; }
+.tr-src { font-size: var(--wz-text-sm); color: var(--ink-3); }

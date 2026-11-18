@@ -1,370 +1,540 @@
 {
-  "openapi": "3.0.3",
-  "info": {
-    "title": "Translator",
-    "version": "0.1.0",
-    "description": "Private translation through a self-hosted LibreTranslate engine (AGPL-3.0)."
-  },
-  "paths": {
-    "/api/translate": {
-      "post": {
-        "summary": "Translate text (saved to recent history unless save=false)",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "text",
-                  "target"
-                ],
-                "properties": {
-                  "text": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 5000
-                  },
-                  "source": {
-                    "type": "string",
-                    "description": "Source code or auto (default)"
-                  },
-                  "target": {
-                    "type": "string",
-                    "description": "LibreTranslate language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
-                  },
-                  "save": {
-                    "type": "boolean"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Translation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "text": {
-                      "type": "string"
-                    },
-                    "translation": {
-                      "type": "string"
-                    },
-                    "source": {
-                      "type": "string",
-                      "description": "LibreTranslate language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
-                    },
-                    "target": {
-                      "type": "string",
-                      "description": "LibreTranslate language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
-                    },
-                    "detected": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "id": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid text or language"
-          },
-          "503": {
-            "description": "Engine starting or offline"
-          }
-        }
-      }
-    },
-    "/api/languages": {
-      "get": {
-        "summary": "Languages and engine readiness",
-        "responses": {
-          "200": {
-            "description": "{engine: ready|offline, languages:[{code,name,local}]}"
-          }
-        }
-      }
-    },
-    "/api/history": {
-      "get": {
-        "summary": "Recent translations, newest first",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 200
-            }
-          }
+ "openapi": "3.0.3",
+ "info": {
+  "title": "Translator",
+  "version": "0.2.0",
+  "description": "Private translation. Server engine: a private LLM through the box's Tinfoil app (linked with a Translator-only token the owner page obtains from the Tinfoil app). Device engine: Firefox Translations in the browser; this server only mirrors its pinned model files at /offline/{sha256}."
+ },
+ "paths": {
+  "/api/translate": {
+   "post": {
+    "summary": "Translate text (saved to recent history unless save=false)",
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "required": [
+         "text",
+         "target"
         ],
-        "responses": {
-          "200": {
-            "description": "History",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "history": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "text": {
-                            "type": "string"
-                          },
-                          "translation": {
-                            "type": "string"
-                          },
-                          "source": {
-                            "type": "string"
-                          },
-                          "target": {
-                            "type": "string"
-                          },
-                          "detected": {
-                            "type": "string"
-                          },
-                          "updated": {
-                            "type": "number"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+        "properties": {
+         "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 5000
+         },
+         "source": {
+          "type": "string",
+          "description": "Source code or auto (default)"
+         },
+         "target": {
+          "type": "string",
+          "description": "Language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
+         },
+         "save": {
+          "type": "boolean"
+         }
         }
-      },
-      "post": {
-        "summary": "Save an already-translated pair; idempotent by id",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "text",
-                  "translation",
-                  "source",
-                  "target"
-                ],
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "minLength": 8,
-                    "maxLength": 64
-                  },
-                  "text": {
-                    "type": "string"
-                  },
-                  "translation": {
-                    "type": "string"
-                  },
-                  "source": {
-                    "type": "string",
-                    "description": "LibreTranslate language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
-                  },
-                  "target": {
-                    "type": "string",
-                    "description": "LibreTranslate language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "{id, history}"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Translation",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "text": {
+           "type": "string"
           },
-          "400": {
-            "description": "Invalid"
+          "translation": {
+           "type": "string"
+          },
+          "source": {
+           "type": "string",
+           "description": "Language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
+          },
+          "target": {
+           "type": "string",
+           "description": "Language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
+          },
+          "detected": {
+           "type": "string",
+           "nullable": true
+          },
+          "id": {
+           "type": "string"
+          },
+          "engine": {
+           "type": "string",
+           "enum": [
+            "tinfoil",
+            "none"
+           ],
+           "description": "tinfoil = private LLM; none = source and target are the same"
+          },
+          "model": {
+           "type": "string",
+           "description": "Tinfoil model that answered"
           }
+         }
         }
+       }
       }
-    },
-    "/api/history/clear": {
-      "post": {
-        "summary": "Delete all recent translations",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Empty history",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "history": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "text": {
-                            "type": "string"
-                          },
-                          "translation": {
-                            "type": "string"
-                          },
-                          "source": {
-                            "type": "string"
-                          },
-                          "target": {
-                            "type": "string"
-                          },
-                          "detected": {
-                            "type": "string"
-                          },
-                          "updated": {
-                            "type": "number"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/prefs": {
-      "get": {
-        "summary": "Last chosen languages and enabled features",
-        "responses": {
-          "200": {
-            "description": "Prefs",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "source": {
-                      "type": "string",
-                      "description": "LibreTranslate language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
-                    },
-                    "target": {
-                      "type": "string",
-                      "description": "LibreTranslate language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
-                    },
-                    "features": {
-                      "type": "object"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Remember the chosen languages",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "source": {
-                    "type": "string",
-                    "description": "LibreTranslate language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
-                  },
-                  "target": {
-                    "type": "string",
-                    "description": "LibreTranslate language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Prefs",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "source": {
-                      "type": "string",
-                      "description": "LibreTranslate language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
-                    },
-                    "target": {
-                      "type": "string",
-                      "description": "LibreTranslate language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
-                    },
-                    "features": {
-                      "type": "object"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/switches": {
-      "get": {
-        "summary": "Owner feature switches (wizard.app-switches/1)",
-        "responses": {
-          "200": {
-            "description": "Switches"
-          }
-        }
-      }
-    },
-    "/healthz": {
-      "get": {
-        "summary": "Health",
-        "responses": {
-          "200": {
-            "description": "ok"
-          }
-        }
-      }
-    },
-    "/mcp": {
-      "post": {
-        "summary": "MCP streamable HTTP: translate, languages, history",
-        "responses": {
-          "200": {
-            "description": "JSON-RPC"
-          }
-        }
-      }
+     },
+     "400": {
+      "description": "Invalid text or language"
+     },
+     "503": {
+      "description": "Engine starting or offline"
+     },
+     "409": {
+      "description": "Tinfoil is not linked to Translator (open the app once with Tinfoil connected)"
+     }
     }
+   }
+  },
+  "/api/languages": {
+   "get": {
+    "summary": "Languages, server engine state (ready|not_linked) and the offline model manifest",
+    "responses": {
+     "200": {
+      "description": "{engine: ready|offline, languages:[{code,name,local}]}"
+     }
+    }
+   }
+  },
+  "/api/history": {
+   "get": {
+    "summary": "Recent translations, newest first",
+    "parameters": [
+     {
+      "name": "limit",
+      "in": "query",
+      "schema": {
+       "type": "integer",
+       "minimum": 1,
+       "maximum": 200
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "History",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "history": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "type": "string"
+             },
+             "text": {
+              "type": "string"
+             },
+             "translation": {
+              "type": "string"
+             },
+             "source": {
+              "type": "string"
+             },
+             "target": {
+              "type": "string"
+             },
+             "detected": {
+              "type": "string"
+             },
+             "updated": {
+              "type": "number"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "summary": "Save an already-translated pair; idempotent by id",
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "required": [
+         "text",
+         "translation",
+         "source",
+         "target"
+        ],
+        "properties": {
+         "id": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 64
+         },
+         "text": {
+          "type": "string"
+         },
+         "translation": {
+          "type": "string"
+         },
+         "source": {
+          "type": "string",
+          "description": "Language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
+         },
+         "target": {
+          "type": "string",
+          "description": "Language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
+         }
+        }
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "{id, history}"
+     },
+     "400": {
+      "description": "Invalid"
+     }
+    }
+   }
+  },
+  "/api/history/clear": {
+   "post": {
+    "summary": "Delete all recent translations",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Empty history",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "history": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "type": "string"
+             },
+             "text": {
+              "type": "string"
+             },
+             "translation": {
+              "type": "string"
+             },
+             "source": {
+              "type": "string"
+             },
+             "target": {
+              "type": "string"
+             },
+             "detected": {
+              "type": "string"
+             },
+             "updated": {
+              "type": "number"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/prefs": {
+   "get": {
+    "summary": "Last chosen languages and enabled features",
+    "responses": {
+     "200": {
+      "description": "Prefs",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "source": {
+           "type": "string",
+           "description": "Language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
+          },
+          "target": {
+           "type": "string",
+           "description": "Language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
+          },
+          "features": {
+           "type": "object"
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "summary": "Remember the chosen languages",
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "properties": {
+         "source": {
+          "type": "string",
+          "description": "Language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
+         },
+         "target": {
+          "type": "string",
+          "description": "Language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
+         },
+         "speaker": {
+          "type": "string",
+          "enum": [
+           "male",
+           "female"
+          ],
+          "description": "Thai politeness particle: ครับ or ค่ะ"
+         },
+         "engine": {
+          "type": "string",
+          "enum": [
+           "auto",
+           "device"
+          ],
+          "description": "auto = device draft then private AI; device = never send text"
+         }
+        }
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Prefs",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "source": {
+           "type": "string",
+           "description": "Language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
+          },
+          "target": {
+           "type": "string",
+           "description": "Language code (th, en, ja, zh-Hans, ko, vi, es, fr, de, ru)"
+          },
+          "features": {
+           "type": "object"
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/switches": {
+   "get": {
+    "summary": "Owner feature switches (wizard.app-switches/1)",
+    "responses": {
+     "200": {
+      "description": "Switches"
+     }
+    }
+   }
+  },
+  "/healthz": {
+   "get": {
+    "summary": "Health",
+    "responses": {
+     "200": {
+      "description": "ok"
+     }
+    }
+   }
+  },
+  "/mcp": {
+   "post": {
+    "summary": "MCP streamable HTTP: translate, languages, history",
+    "responses": {
+     "200": {
+      "description": "JSON-RPC"
+     }
+    }
+   }
+  },
+  "/api/tinfoil": {
+   "get": {
+    "summary": "Tinfoil link state (never returns the token)",
+    "responses": {
+     "200": {
+      "description": "Link state",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "linked": {
+           "type": "boolean"
+          },
+          "removed": {
+           "type": "boolean"
+          },
+          "model": {
+           "type": "string",
+           "nullable": true
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "summary": "Keep the Translator-only box token the Tinfoil app issued to the owner page (POST /wizard-tinfoil/api/app-tokens)",
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "required": [
+         "token"
+        ],
+        "properties": {
+         "token": {
+          "type": "string"
+         }
+        }
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Linked",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "linked": {
+           "type": "boolean"
+          },
+          "removed": {
+           "type": "boolean"
+          },
+          "model": {
+           "type": "string",
+           "nullable": true
+          }
+         }
+        }
+       }
+      }
+     },
+     "400": {
+      "description": "Token refused"
+     },
+     "503": {
+      "description": "Tinfoil app unreachable"
+     }
+    }
+   }
+  },
+  "/api/tinfoil/unlink": {
+   "post": {
+    "summary": "Forget the Tinfoil token",
+    "responses": {
+     "200": {
+      "description": "Unlinked",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "linked": {
+           "type": "boolean"
+          },
+          "removed": {
+           "type": "boolean"
+          },
+          "model": {
+           "type": "string",
+           "nullable": true
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/offline/{sha256}": {
+   "get": {
+    "summary": "A pinned Firefox Translations model or WASM file (sha256-checked, immutable) for the on-device engine",
+    "parameters": [
+     {
+      "name": "sha256",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "pattern": "^[0-9a-f]{64}$"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "File",
+      "content": {
+       "application/octet-stream": {}
+      }
+     },
+     "404": {
+      "description": "Not a pinned file"
+     },
+     "503": {
+      "description": "Could not download from Mozilla"
+     }
+    }
+   }
   }
+ }
 }
