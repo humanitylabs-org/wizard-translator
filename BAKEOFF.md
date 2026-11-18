@@ -66,6 +66,10 @@ kimi-k3-1-pro, then deepseek-v4-1-flash if Gemma is missing from the Tinfoil mod
 3. Offline, Tinfoil down or not linked: the device draft stays, labelled “On this device · private AI unavailable”.
 4. “Only this device” mode never sends text anywhere.
 
+Models are kept in the browser's Cache Storage after the first download (Thai both ways downloads automatically on
+Wi-Fi). Hosted Wizard apps may not own a service worker, so the page itself must be loaded once while online; after
+that, losing signal mid-use keeps translating on the device.
+
 Privacy trade-off: the server path sends the text to a Tinfoil enclave (attested, not stored), not just to the box.
 LibreTranslate kept everything on the box but was wrong on more than half the phrases; Bergamot now covers the
 "nothing leaves my device" case better than LibreTranslate did.
