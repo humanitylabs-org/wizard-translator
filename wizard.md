@@ -7,6 +7,7 @@ category: app
 version: 0.2.0
 summary: Translate Thai, English and more with a private AI model, or offline on your phone.
 license: GPL-3.0-only
+icon: icon.png
 source: https://github.com/humanitylabs-org/wizard-translator
 runtime:
   package: source
