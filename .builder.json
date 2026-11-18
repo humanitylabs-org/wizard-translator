@@ -1,0 +1,8 @@
+{
+  "request": "Translate text between Thai, English and other languages privately on your own box",
+  "template": "hello-wizard",
+  "kind": "hello",
+  "rules": 2,
+  "state": "local_draft",
+  "name": "Translator"
+}

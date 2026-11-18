@@ -1,0 +1,18 @@
+{
+  "round_trip": [
+    {"do": "GET /api/languages", "name": "languages (fallback list while the engine is away)",
+     "expect": {"languages.1.code": "th"}},
+    {"do": "POST /api/history", "name": "create",
+     "body": {"id": "{{uuid:h}}", "text": "Where is the BTS station? {{run}}", "translation": "สถานีบีทีเอสอยู่ที่ไหน", "source": "en", "target": "th"},
+     "status": 201, "save": {"hid": "id"}},
+    {"do": "POST /api/history", "name": "idempotent replay",
+     "body": {"id": "{{uuid:h}}", "text": "Where is the BTS station? {{run}}", "translation": "สถานีบีทีเอสอยู่ที่ไหน", "source": "en", "target": "th"},
+     "status": 201, "expect": {"id": "{{hid}}", "history.0.id": "{{hid}}"}},
+    {"do": "GET /api/history", "name": "list", "expect": {"history.0.id": "{{hid}}", "history.0.target": "th"}},
+    {"do": "POST /api/prefs", "name": "update", "body": {"source": "th", "target": "en"}, "expect": {"source": "th", "target": "en"}},
+    {"restart": true},
+    {"do": "GET /api/history", "name": "read back after restart",
+     "expect": {"history.0.id": "{{hid}}", "history.0.text": "Where is the BTS station? {{run}}", "history.0.translation": "สถานีบีทีเอสอยู่ที่ไหน"}},
+    {"do": "GET /api/prefs", "name": "prefs after restart", "expect": {"source": "th", "target": "en"}}
+  ]
+}

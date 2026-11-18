@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en" data-app="translator">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <title>Translator</title>
+  <script src="boot.js"></script>
+  <link rel="stylesheet" href="wizard-tokens.css">
+  <link rel="stylesheet" href="wizard-ui.css">
+  <link rel="stylesheet" href="standalone.css">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="/wizard-os-home/core/app-client.js"></script>
+  <script defer src="wizard-sheet.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="wz-app">
+    <header class="wz-head"><h1>Translator</h1><p><span id="engine" class="wz-pill off">Private</span></p></header>
+    <main class="wz-scroll">
+      <div class="tr-langs" role="group" aria-label="Languages">
+        <button id="source" class="wz-button secondary tr-lang" type="button" aria-haspopup="dialog">Detect language</button>
+        <button id="swap" class="wz-icon-button ghost" type="button" aria-label="Swap languages">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h12l-3-3M17 17H5l3 3"/></svg>
+        </button>
+        <button id="target" class="wz-button secondary tr-lang" type="button" aria-haspopup="dialog">Thai</button>
+      </div>
+
+      <section class="wz-card tr-box">
+        <label class="wz-sr" for="text">Text to translate</label>
+        <textarea id="text" class="tr-text" rows="4" maxlength="5000" placeholder="Type or paste text" autocapitalize="sentences" spellcheck="true"></textarea>
+        <div class="tr-row">
+          <small id="detected" class="tr-note"></small>
+          <button id="clear" class="wz-icon-button ghost" type="button" aria-label="Clear text" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <section class="wz-card tr-box tr-out" aria-live="polite" aria-labelledby="result-label">
+        <span id="result-label" class="wz-sr">Translation</span>
+        <p id="result" class="tr-result"></p>
+        <p id="placeholder" class="tr-note">Translation appears here</p>
+        <div class="tr-row">
+          <small id="busy" class="tr-note"></small>
+          <button id="copy" class="wz-icon-button ghost caption" type="button" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg>
+            <span>Copy</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="wz-sec" aria-labelledby="recent-h" id="recent-sec" hidden>
+        <h2 class="wz-sec-h" id="recent-h">Recent</h2>
+        <ul id="recent" class="wz-list" aria-label="Recent translations"></ul>
+      </section>
+      <p id="status" class="wz-status wz-sr" role="status" aria-live="polite"></p>
+      <p class="tr-credit">Private translation by <a href="https://github.com/LibreTranslate/LibreTranslate" target="_blank" rel="noopener">LibreTranslate</a> on this box.</p>
+    </main>
+  </div>
+
+  <dialog id="picker" class="wz-sheet" aria-labelledby="picker-h">
+    <h2 id="picker-h">Translate from</h2>
+    <ul id="picker-list" class="wz-list"></ul>
+  </dialog>
+</body>
+</html>
