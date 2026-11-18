@@ -217,10 +217,11 @@ function loadLanguages() {
 // box. The Tinfoil key never leaves the Tinfoil app; Remove there (or Unlink here) revokes the token.
 async function linkTinfoil() {
   try {
-    const conn = await fetch(TINFOIL + 'api/connection', { credentials: 'same-origin', cache: 'no-store' }).then(r => r.ok ? r.json() : null);
-    if (!conn || conn.status !== 'connected') { state.server.tinfoil = conn ? 'not_connected' : 'missing'; return false; }
-    const grant = await fetch(TINFOIL + 'api/app-tokens', { method: 'POST', credentials: 'same-origin', cache: 'no-store',
-      headers: { 'Content-Type': 'application/json', 'X-Wizard-Request': '1' }, body: JSON.stringify({ app: 'translator' }) }).then(r => r.ok ? r.json() : null);
+    // (Tinfoil's api/connection is box-only, so the page asks for the token directly: 409 = not connected yet.)
+    const r = await fetch(TINFOIL + 'api/app-tokens', { method: 'POST', credentials: 'same-origin', cache: 'no-store',
+      headers: { 'Content-Type': 'application/json', 'X-Wizard-Request': '1' }, body: JSON.stringify({ app: 'translator' }) });
+    if (!r.ok) { state.server.tinfoil = r.status === 409 ? 'not_connected' : r.status === 404 ? 'missing' : 'error'; return false; }
+    const grant = await r.json().catch(() => null);
     if (!grant?.token) return false;
     state.server = await request('api/tinfoil', { token: grant.token });
     return state.server.linked;
